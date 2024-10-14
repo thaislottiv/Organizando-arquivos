@@ -1,0 +1,55 @@
+import os
+import shutil
+
+# Função que cria subpastas para categorias de arquivos
+def criar_subpastas(diretorio):
+    categorias = ['Imagens', 'Documentos', 'Vídeos', 'Outros']
+    for categoria in categorias:
+        caminho = os.path.join(diretorio, categoria)
+        if not os.path.exists(caminho):
+            os.makedirs(caminho)
+
+# Função que move arquivos para as subpastas corretas
+def organizar_arquivos(diretorio):
+    # Extensões de arquivos por categoria
+    tipos_arquivos = {
+        'Imagens': ['.jpg', '.jpeg', '.png', '.gif', '.bmp'],
+        'Documentos': ['.pdf', '.docx', '.xlsx', '.txt', '.pptx'],
+        'Vídeos': ['.mp4', '.mov', '.mkv', '.avi'],
+    }
+    
+    criar_subpastas(diretorio)
+
+    # Loop pelos arquivos no diretório
+    for arquivo in os.listdir(diretorio):
+        caminho_completo = os.path.join(diretorio, arquivo)
+
+        # Verifica se é um arquivo (ignora pastas)
+        if os.path.isfile(caminho_completo):
+            # Move o arquivo para a subpasta correta com base na extensão
+            movido = False
+            for categoria, extensoes in tipos_arquivos.items():
+                if arquivo.endswith(tuple(extensoes)):
+                    shutil.move(caminho_completo, os.path.join(diretorio, categoria, arquivo))
+                    print(f'Movido {arquivo} para {categoria}')
+                    movido = True
+                    break
+            
+            # Se o arquivo não se encaixar em nenhuma categoria, move para "Outros"
+            if not movido:
+                shutil.move(caminho_completo, os.path.join(diretorio, 'Outros', arquivo))
+                print(f'Movido {arquivo} para Outros')
+
+# Função principal
+def main():
+    # Diretório a ser organizado (pode alterar para o caminho que você quiser)
+    diretorio = input("Digite o caminho da pasta que deseja organizar: ")
+    
+    if os.path.exists(diretorio):
+        organizar_arquivos(diretorio)
+        print("Organização concluída!")
+    else:
+        print("Diretório não encontrado.")
+
+if __name__ == '__main__':
+    main()
